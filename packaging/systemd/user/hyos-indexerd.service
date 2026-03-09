@@ -1,0 +1,46 @@
+[Unit]
+Description=HyOS Indexer — local document content indexer
+Documentation=https://hyos.tech/docs/services/indexerd
+After=dbus.socket
+
+[Service]
+Type=dbus
+BusName=org.hyos.Indexer1
+ExecStart=/usr/libexec/hyos/hyos-indexerd
+
+# --- Hardening ---
+NoNewPrivileges=yes
+ProtectSystem=strict
+# read-only access to home; explicit ReadOnlyPaths below
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+# No network whatsoever — indexer does not call Ollama
+RestrictAddressFamilies=AF_UNIX
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+LockPersonality=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+
+# Only allowed read paths
+ReadOnlyPaths=%h/Documents %h/Downloads %h/Desktop
+
+# Index storage (the only writable path)
+ReadWritePaths=%h/.local/share/hyos/index
+
+# Explicitly block sensitive directories
+InaccessiblePaths=/etc /root \
+    %h/.ssh \
+    %h/.gnupg \
+    %h/.config/chromium \
+    %h/.mozilla \
+    %h/.local/share/keyrings \
+    %h/.kube \
+    %h/.aws \
+    %h/.azure
+
+[Install]
+WantedBy=default.target

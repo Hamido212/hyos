@@ -1,0 +1,36 @@
+[Unit]
+Description=HyOS Router — task orchestrator
+Documentation=https://hyos.tech/docs/services/routerd
+After=dbus.socket
+Wants=hyos-indexerd.service hyos-docd.service hyos-policyd.service
+
+[Service]
+Type=dbus
+BusName=org.hyos.Router1
+ExecStart=/usr/libexec/hyos/hyos-routerd
+
+# --- Hardening ---
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+# Only AF_UNIX for session bus; AF_INET needed to reach Ollama on localhost
+RestrictAddressFamilies=AF_UNIX AF_INET
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+LockPersonality=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+
+# Ollama is on localhost; no external network needed
+IPAddressAllow=127.0.0.1/8 ::1/128
+IPAddressDeny=any
+
+# No write access needed at all
+ReadWritePaths=
+
+[Install]
+WantedBy=default.target

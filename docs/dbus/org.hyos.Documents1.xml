@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  org.hyos.Documents1
+  HyOS document workflow interface.
+
+  Bus:         Session Bus
+  Object path: /org/hyos/Documents
+  Service:     org.hyos.Documents1
+
+  Provides AI-driven document analysis and text generation workflows.
+  All methods are read-only with respect to the file system — they
+  return data, never write files.
+
+  The service may only operate on files within allowed paths
+  (~/Documents, ~/Downloads, ~/Desktop) or on caller-supplied text.
+-->
+
+<node name="/org/hyos/Documents">
+  <interface name="org.hyos.Documents1">
+
+    <!--
+      SummarizeUri: Generate a summary of a document.
+
+      Parameters:
+        uri - file:// URI of the document to summarize.
+
+      Returns a dict with:
+        "summary"  (s)  - Plain-text summary
+        "language" (s)  - Detected language (ISO 639-1)
+        "model"    (s)  - Model that generated the summary
+        "duration" (d)  - Processing time in seconds
+    -->
+    <method name="SummarizeUri">
+      <arg name="uri"    type="s"      direction="in"/>
+      <arg name="result" type="a{sv}"  direction="out"/>
+    </method>
+
+    <!--
+      ExtractDeadlinesUri: Extract dates and deadlines from a document.
+
+      Returns a dict with:
+        "deadlines" (aa{sv}) - Array of deadline dicts, each with:
+          "date"        (s) - ISO 8601 date
+          "description" (s) - What the deadline is for
+          "confidence"  (d) - 0.0–1.0
+        "model"    (s)  - Model used
+        "language" (s)  - Detected language
+    -->
+    <method name="ExtractDeadlinesUri">
+      <arg name="uri"    type="s"      direction="in"/>
+      <arg name="result" type="a{sv}"  direction="out"/>
+    </method>
+
+    <!--
+      TranslateUri: Translate the content of a document.
+
+      Parameters:
+        uri         - file:// URI of the source document.
+        target_lang - ISO 639-1 language code (e.g. "en", "de", "tr").
+
+      Returns a dict with:
+        "translation" (s) - Translated text
+        "source_lang" (s) - Detected source language
+        "model"       (s) - Model used
+    -->
+    <method name="TranslateUri">
+      <arg name="uri"         type="s"      direction="in"/>
+      <arg name="target_lang" type="s"      direction="in"/>
+      <arg name="result"      type="a{sv}"  direction="out"/>
+    </method>
+
+    <!--
+      DraftReplyUri: Generate a reply draft for a document.
+
+      Parameters:
+        uri  - file:// URI of the document to reply to.
+        tone - Desired tone: "formal", "neutral", "brief".
+
+      Returns a dict with:
+        "draft"    (s) - Draft reply text
+        "language" (s) - Language the draft is in
+        "model"    (s) - Model used
+    -->
+    <method name="DraftReplyUri">
+      <arg name="uri"    type="s"      direction="in"/>
+      <arg name="tone"   type="s"      direction="in"/>
+      <arg name="result" type="a{sv}"  direction="out"/>
+    </method>
+
+    <!--
+      ProcessText: Apply an AI action to caller-supplied text.
+
+      Parameters:
+        action  - One of: "summarize", "translate", "rewrite",
+                  "extract_deadlines", "draft_reply"
+        text    - Input text to process.
+        options - Additional options (e.g. {"target_lang": "en"}).
+
+      Returns a dict with:
+        "output"  (s)  - Processed text
+        "model"   (s)  - Model used
+        "action"  (s)  - Action that was applied
+    -->
+    <method name="ProcessText">
+      <arg name="action"  type="s"      direction="in"/>
+      <arg name="text"    type="s"      direction="in"/>
+      <arg name="options" type="a{sv}"  direction="in"/>
+      <arg name="result"  type="a{sv}"  direction="out"/>
+    </method>
+
+  </interface>
+</node>

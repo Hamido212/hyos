@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=HyOS Writer
+GenericName=AI Text Editor
+Comment=Write, rewrite, and translate text with HyOS AI
+Exec=hyos-writer %f
+Icon=tech.hyos.Writer
+StartupNotify=true
+Categories=Office;TextEditor;
+MimeType=text/plain;text/markdown;
+Keywords=AI;write;draft;translate;rewrite;

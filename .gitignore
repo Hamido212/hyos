@@ -1,0 +1,81 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Rust
+target/
+Cargo.lock
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+*.egg
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Node (if any JS tooling)
+node_modules/
+npm-debug.log*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+*.o
+*.so
+*.a
+*.lo
+*.la
+*.al
+*.libs
+Makefile.in
+
+# Autotools
+autom4te.cache/
+configure
+config.log
+config.status
+
+# Test output
+.pytest_cache/
+coverage/
+.coverage
+htmlcov/
+*.lcov
+
+# Generated D-Bus source files (keep XML, not generated C/Py)
+*-generated.c
+*-generated.h
+*_dbus_generated.py
+
+# RPM build
+~/rpmbuild/
+*.rpm
+*.srpm
+
+# systemd credential stores (do not commit secrets)
+*.cred
+*.pem
+*.key
+
+# Local dev overrides
+.env
+.env.local
+local.conf
+dev-overrides/
+
+# OS
+Thumbs.db

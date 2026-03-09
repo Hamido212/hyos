@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.hyos.Documents1
+Exec=/usr/libexec/hyos/hyos-docd
+SystemdService=hyos-docd.service

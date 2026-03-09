@@ -1,0 +1,36 @@
+[Unit]
+Description=HyOS Search Provider — GNOME Shell search integration
+Documentation=https://hyos.tech/docs/services/search-provider
+After=dbus.socket
+
+[Service]
+Type=dbus
+BusName=tech.hyos.SearchProvider
+ExecStart=/usr/libexec/hyos/hyos-search-provider
+
+# Idle shutdown: search provider can stop after 30s of inactivity
+# (GNOME will re-activate it via D-Bus when needed)
+TimeoutStopSec=30
+
+# --- Hardening ---
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+# Only Session Bus communication needed (AF_UNIX)
+RestrictAddressFamilies=AF_UNIX
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+LockPersonality=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+
+# No filesystem access; delegates everything to other HyOS services
+ReadOnlyPaths=
+ReadWritePaths=
+
+[Install]
+WantedBy=default.target

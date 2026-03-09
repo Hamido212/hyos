@@ -1,0 +1,40 @@
+[Unit]
+Description=HyOS Policy — policy engine
+Documentation=https://hyos.tech/docs/services/policyd
+After=dbus.socket
+
+[Service]
+Type=dbus
+BusName=org.hyos.Policy1
+ExecStart=/usr/libexec/hyos/hyos-policyd
+
+# --- Hardening ---
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+# Policy engine does not use network at all
+RestrictAddressFamilies=AF_UNIX
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+LockPersonality=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+
+# Policy config (read) + log storage (write)
+ReadOnlyPaths=%h/.config/hyos
+ReadWritePaths=%h/.local/share/hyos/policy
+
+# No file system access outside of config
+InaccessiblePaths=/etc /root \
+    %h/.ssh \
+    %h/.gnupg \
+    %h/Documents \
+    %h/Downloads \
+    %h/Desktop
+
+[Install]
+WantedBy=default.target

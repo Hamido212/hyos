@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  org.hyos.Router1
+  HyOS central task orchestrator interface.
+
+  Bus:         Session Bus
+  Object path: /org/hyos/Router
+  Service:     org.hyos.Router1
+
+  All task requests from the Search Provider and HyOS apps go through
+  this interface. The router checks policy via org.hyos.Policy1 before
+  executing any task.
+-->
+
+<node name="/org/hyos/Router">
+  <interface name="org.hyos.Router1">
+
+    <!--
+      RunTask: Submit a task for asynchronous execution.
+
+      Parameters:
+        request  - Dictionary of task parameters.
+                   Required keys:
+                     "type" (s)  - Task type, e.g. "semantic_search",
+                                   "summarize", "extract_deadlines",
+                                   "translate", "draft_reply"
+                   Optional keys vary by type.
+
+      Returns:
+        job_id   - Opaque string identifying the submitted job.
+                   Use with GetJob, CancelJob, and the JobUpdated signal.
+
+      Errors:
+        org.hyos.Error.PolicyDenied     - Action not permitted by policy.
+        org.hyos.Error.UnknownTask      - Unknown task type.
+        org.hyos.Error.InvalidArgument  - Missing or malformed parameter.
+        org.hyos.Error.ServiceUnavailable - A required backend is unavailable.
+    -->
+    <method name="RunTask">
+      <arg name="request" type="a{sv}" direction="in"/>
+      <arg name="job_id"  type="s"     direction="out"/>
+    </method>
+
+    <!--
+      GetJob: Get the current state of a job.
+
+      Returns a dictionary with keys:
+        "id"      (s) - Job ID
+        "status"  (s) - "pending", "running", "finished", "failed", "cancelled"
+        "result"  (v) - Result variant; type depends on task type (only when finished)
+        "error"   (a{ss}) - {code, message} (only when failed)
+        "progress"(u) - 0–100 percent estimate (only when running)
+    -->
+    <method name="GetJob">
+      <arg name="job_id" type="s"      direction="in"/>
+      <arg name="state"  type="a{sv}"  direction="out"/>
+    </method>
+
+    <!--
+      CancelJob: Request cancellation of a running or pending job.
+      No error if the job is already finished or does not exist.
+    -->
+    <method name="CancelJob">
+      <arg name="job_id" type="s" direction="in"/>
+    </method>
+
+    <!--
+      ListCapabilities: Return the list of available task types.
+
+      Returns an array of task type strings the router currently supports,
+      based on available backend services and policy mode.
+    -->
+    <method name="ListCapabilities">
+      <arg name="capabilities" type="as" direction="out"/>
+    </method>
+
+    <!--
+      JobUpdated: Emitted when a job's status or progress changes.
+
+      state keys: same as GetJob return value.
+    -->
+    <signal name="JobUpdated">
+      <arg name="job_id" type="s"/>
+      <arg name="state"  type="a{sv}"/>
+    </signal>
+
+    <!--
+      JobFinished: Emitted when a job completes successfully.
+    -->
+    <signal name="JobFinished">
+      <arg name="job_id" type="s"/>
+      <arg name="result" type="a{sv}"/>
+    </signal>
+
+    <!--
+      JobFailed: Emitted when a job fails.
+    -->
+    <signal name="JobFailed">
+      <arg name="job_id"  type="s"/>
+      <arg name="code"    type="s"/>
+      <arg name="message" type="s"/>
+    </signal>
+
+  </interface>
+</node>

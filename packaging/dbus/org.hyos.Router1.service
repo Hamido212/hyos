@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.hyos.Router1
+Exec=/usr/libexec/hyos/hyos-routerd
+SystemdService=hyos-routerd.service

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "hyos-search-provider"
+version = "0.0.1"
+description = "HyOS GNOME Shell search provider"
+requires-python = ">=3.11"
+# Runtime deps: dbus-python, PyGObject — available on Fedora via dnf
+# dnf install python3-dbus python3-gobject
+
+[project.scripts]
+hyos-search-provider = "hyos_search_provider.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

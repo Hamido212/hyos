@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.hyos.Indexer1
+Exec=/usr/libexec/hyos/hyos-indexerd
+SystemdService=hyos-indexerd.service

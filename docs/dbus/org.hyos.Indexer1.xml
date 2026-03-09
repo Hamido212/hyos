@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  org.hyos.Indexer1
+  HyOS local content indexer interface.
+
+  Bus:         Session Bus
+  Object path: /org/hyos/Indexer
+  Service:     org.hyos.Indexer1
+
+  Provides fast lexical search over user documents. Semantic reranking
+  is handled by hyos-routerd on top of these results. This service
+  operates read-only over the allowed paths only.
+
+  Allowed paths (v0.1): ~/Documents, ~/Downloads, ~/Desktop
+-->
+
+<node name="/org/hyos/Indexer">
+  <interface name="org.hyos.Indexer1">
+
+    <!--
+      IndexPath: Trigger indexing of a path.
+
+      Parameters:
+        uri       - file:// URI of the directory or file to index.
+        recursive - If true, index subdirectories.
+
+      The indexer validates that the URI is within the allowed path set
+      before proceeding. Calls with out-of-scope URIs return
+      org.hyos.Error.AccessDenied.
+    -->
+    <method name="IndexPath">
+      <arg name="uri"       type="s" direction="in"/>
+      <arg name="recursive" type="b" direction="in"/>
+    </method>
+
+    <!--
+      RemovePath: Remove a path from the index.
+    -->
+    <method name="RemovePath">
+      <arg name="uri" type="s" direction="in"/>
+    </method>
+
+    <!--
+      Search: Search the index for documents matching a query.
+
+      Parameters:
+        query - Search string (lexical, not semantic).
+        limit - Maximum number of results to return.
+
+      Returns an array of result dicts. Each dict contains:
+        "doc_id"   (s) - Stable document ID
+        "uri"      (s) - file:// URI of the document
+        "name"     (s) - Filename
+        "mimetype" (s) - MIME type
+        "mtime"    (t) - Last modification time (Unix timestamp)
+        "score"    (d) - Match score (higher is better)
+        "snippet"  (s) - Short context excerpt around the match
+    -->
+    <method name="Search">
+      <arg name="query"   type="s"      direction="in"/>
+      <arg name="limit"   type="u"      direction="in"/>
+      <arg name="results" type="aa{sv}" direction="out"/>
+    </method>
+
+    <!--
+      GetDocumentMeta: Get metadata for a specific document.
+
+      Returns a dict with:
+        "doc_id"   (s) - Stable document ID
+        "uri"      (s) - file:// URI
+        "name"     (s) - Filename
+        "mimetype" (s) - MIME type
+        "mtime"    (t) - Last modification time
+        "size"     (t) - File size in bytes
+        "indexed"  (t) - Time this document was indexed
+        "wordcount"(u) - Approximate word count of extracted text
+    -->
+    <method name="GetDocumentMeta">
+      <arg name="doc_id" type="s"      direction="in"/>
+      <arg name="meta"   type="a{sv}"  direction="out"/>
+    </method>
+
+    <!--
+      GetSnippet: Get a context snippet for a document around a query.
+
+      Returns a short excerpt of the document content that is most
+      relevant to the given query. Used by the Search Provider for
+      result descriptions.
+    -->
+    <method name="GetSnippet">
+      <arg name="doc_id"  type="s" direction="in"/>
+      <arg name="query"   type="s" direction="in"/>
+      <arg name="snippet" type="s" direction="out"/>
+    </method>
+
+    <!--
+      IndexingStarted: Emitted when an indexing operation begins.
+    -->
+    <signal name="IndexingStarted">
+      <arg name="uri" type="s"/>
+    </signal>
+
+    <!--
+      IndexingFinished: Emitted when an indexing operation completes.
+
+      stats dict keys:
+        "added"   (u) - Documents newly indexed
+        "updated" (u) - Documents updated
+        "removed" (u) - Documents removed
+        "errors"  (u) - Errors encountered
+    -->
+    <signal name="IndexingFinished">
+      <arg name="uri"   type="s"/>
+      <arg name="stats" type="a{sv}"/>
+    </signal>
+
+  </interface>
+</node>

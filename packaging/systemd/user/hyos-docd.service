@@ -1,0 +1,49 @@
+[Unit]
+Description=HyOS Document service — document analysis and drafting
+Documentation=https://hyos.tech/docs/services/docd
+After=dbus.socket
+
+[Service]
+Type=dbus
+BusName=org.hyos.Documents1
+ExecStart=/usr/libexec/hyos/hyos-docd
+
+# --- Hardening ---
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+# AF_INET needed for Ollama on localhost
+RestrictAddressFamilies=AF_UNIX AF_INET
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+LockPersonality=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+
+# Only Ollama on localhost
+IPAddressAllow=127.0.0.1/8 ::1/128
+IPAddressDeny=any
+
+# Only allowed read paths
+ReadOnlyPaths=%h/Documents %h/Downloads %h/Desktop
+
+# No write paths — this service writes nothing
+ReadWritePaths=
+
+# Block sensitive directories
+InaccessiblePaths=/etc /root \
+    %h/.ssh \
+    %h/.gnupg \
+    %h/.config/chromium \
+    %h/.mozilla \
+    %h/.local/share/keyrings \
+    %h/.kube \
+    %h/.aws \
+    %h/.azure
+
+[Install]
+WantedBy=default.target
