@@ -27,13 +27,5 @@ RemoveIPC=yes
 # Policy config (read) + log storage (write)
 ReadWritePaths=%h/.config/hyos %h/.local/share/hyos/policy
 
-# No file system access outside of config
-InaccessiblePaths=/etc /root \
-    %h/.ssh \
-    %h/.gnupg \
-    %h/Documents \
-    %h/Downloads \
-    %h/Desktop
-
 [Install]
 WantedBy=default.target
