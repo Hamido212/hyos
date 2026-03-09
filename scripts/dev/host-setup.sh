@@ -44,7 +44,7 @@ fi
 echo "==> Layering required host packages via rpm-ostree..."
 echo "    (This stages a reboot — services won't work until after reboot)"
 echo ""
-rpm-ostree install --idempotent \
+rpm-ostree install --idempotent --allow-inactive \
     python3-dbus \
     python3-gobject \
     poppler-utils \

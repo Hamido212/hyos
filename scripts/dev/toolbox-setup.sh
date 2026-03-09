@@ -38,6 +38,8 @@ sudo dnf install -y \
     python3-gobject \
     poppler-utils \
     python3-pip \
+    python3-setuptools \
+    python3-wheel \
     dbus-tools \
     gcc \
     python3-devel
