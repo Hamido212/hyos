@@ -6,7 +6,7 @@ After=dbus.socket
 [Service]
 Type=dbus
 BusName=tech.hyos.SearchProvider
-ExecStart=/usr/libexec/hyos/hyos-search-provider
+ExecStart=%h/.local/bin/hyos-search-provider
 
 # Idle shutdown: search provider can stop after 30s of inactivity
 # (GNOME will re-activate it via D-Bus when needed)
@@ -15,7 +15,7 @@ TimeoutStopSec=30
 # --- Hardening ---
 NoNewPrivileges=yes
 ProtectSystem=strict
-ProtectHome=yes
+ProtectHome=read-only
 PrivateTmp=yes
 PrivateDevices=yes
 # Only Session Bus communication needed (AF_UNIX)

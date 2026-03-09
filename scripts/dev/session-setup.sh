@@ -27,11 +27,14 @@ pip3 install --user -e "$HYOS_ROOT/services/hyos-routerd"
 pip3 install --user -e "$HYOS_ROOT/shell/gnome-search-provider"
 
 # --- D-Bus activation files ----------------------------------------------
+# D-Bus activation files don't support %h specifiers — substitute $HOME here.
 DBUS_SERVICES_DIR="$HOME/.local/share/dbus-1/services"
 mkdir -p "$DBUS_SERVICES_DIR"
 echo ""
 echo "==> Deploying D-Bus activation files → $DBUS_SERVICES_DIR"
-cp "$HYOS_ROOT/packaging/dbus/"*.service "$DBUS_SERVICES_DIR/"
+for f in "$HYOS_ROOT/packaging/dbus/"*.service; do
+    sed "s|/usr/libexec/hyos/|$HOME/.local/bin/|g" "$f" > "$DBUS_SERVICES_DIR/$(basename "$f")"
+done
 echo "    $(ls "$HYOS_ROOT/packaging/dbus/"*.service | wc -l) files deployed"
 
 # --- systemd user units ---------------------------------------------------
@@ -54,6 +57,15 @@ APPS_DIR="$HOME/.local/share/applications"
 mkdir -p "$APPS_DIR"
 cp "$HYOS_ROOT/shell/gnome-search-provider/tech.hyos.SearchProvider.desktop" "$APPS_DIR/"
 update-desktop-database "$APPS_DIR" 2>/dev/null || true
+
+# --- Create required runtime directories ---------------------------------
+echo ""
+echo "==> Creating runtime directories..."
+mkdir -p \
+    "$HOME/.config/hyos" \
+    "$HOME/.local/share/hyos/index" \
+    "$HOME/.local/share/hyos/policy"
+echo "    done"
 
 # --- Enable+start services -----------------------------------------------
 echo ""

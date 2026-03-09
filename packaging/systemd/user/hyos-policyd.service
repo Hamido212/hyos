@@ -6,7 +6,7 @@ After=dbus.socket
 [Service]
 Type=dbus
 BusName=org.hyos.Policy1
-ExecStart=/usr/libexec/hyos/hyos-policyd
+ExecStart=%h/.local/bin/hyos-policyd
 
 # --- Hardening ---
 NoNewPrivileges=yes

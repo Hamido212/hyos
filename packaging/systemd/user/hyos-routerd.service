@@ -7,7 +7,7 @@ Wants=hyos-indexerd.service hyos-docd.service hyos-policyd.service
 [Service]
 Type=dbus
 BusName=org.hyos.Router1
-ExecStart=/usr/libexec/hyos/hyos-routerd
+ExecStart=%h/.local/bin/hyos-routerd
 
 # --- Hardening ---
 NoNewPrivileges=yes

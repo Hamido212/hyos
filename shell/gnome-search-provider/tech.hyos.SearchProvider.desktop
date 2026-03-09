@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=HyOS
+Comment=AI-powered document search
+Exec=hyos-search-provider
+Icon=system-search
+Type=Application
+NoDisplay=true
