@@ -14,14 +14,14 @@ from .scanner import Scanner, ALLOWED_ROOTS, _is_within_allowed
 log = logging.getLogger(__name__)
 
 
-def _sv(val) -> dbus.Variant:
+def _sv(val):
     if isinstance(val, bool):
-        return dbus.Variant("b", val)
+        return dbus.Boolean(val)
     if isinstance(val, int):
-        return dbus.Variant("t", val)  # uint64 for timestamps/sizes
+        return dbus.UInt64(val)  # uint64 for timestamps/sizes
     if isinstance(val, float):
-        return dbus.Variant("d", val)
-    return dbus.Variant("s", str(val) if val is not None else "")
+        return dbus.Double(val)
+    return dbus.String(str(val) if val is not None else "")
 
 
 class IndexerService(dbus.service.Object):
@@ -88,9 +88,9 @@ class IndexerService(dbus.service.Object):
                 "name":     _sv(r.get("name", "")),
                 "mimetype": _sv(r.get("mimetype", "")),
                 "mtime":    _sv(r.get("mtime", 0)),
-                "score":    dbus.Variant("d", 1.0),
+                "score":    dbus.Double(1.0),
                 "snippet":  _sv(r.get("snippet", "")),
-            }))
+            }, signature="sv"))
         return dbus.Array(results, signature="a{sv}")
 
     @dbus.service.method(
@@ -113,7 +113,7 @@ class IndexerService(dbus.service.Object):
             "mtime":    _sv(meta["mtime"]),
             "size":     _sv(meta["size"]),
             "indexed":  _sv(meta["indexed"]),
-        })
+        }, signature="sv")
 
     @dbus.service.method(
         dbus_interface="org.hyos.Indexer1",

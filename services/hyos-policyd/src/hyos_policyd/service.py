@@ -41,14 +41,20 @@ def _load_config() -> dict:
     return _DEFAULT_CONFIG
 
 
-def _sv(val) -> dbus.Variant:
+def _sv(val):
+    """Wrap a plain Python value in the appropriate dbus-python typed object.
+
+    dbus.Variant was removed in dbus-python 1.4. For a{sv} dicts we instead
+    use concrete dbus types directly; dbus-python infers the variant signature
+    from the type of the object.
+    """
     if isinstance(val, bool):
-        return dbus.Variant("b", val)
+        return dbus.Boolean(val)
     if isinstance(val, int):
-        return dbus.Variant("i", val)
+        return dbus.Int64(val)
     if isinstance(val, float):
-        return dbus.Variant("d", val)
-    return dbus.Variant("s", str(val))
+        return dbus.Double(val)
+    return dbus.String(str(val))
 
 
 class PolicyService(dbus.service.Object):
@@ -115,7 +121,8 @@ class PolicyService(dbus.service.Object):
                 "decision": _sv(decision),
                 "reason": _sv(reason),
                 "policy_mode": _sv(self._get_mode()),
-            }
+            },
+            signature="sv",
         )
 
     @dbus.service.method(

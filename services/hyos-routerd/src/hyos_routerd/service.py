@@ -37,14 +37,14 @@ _FAILED    = "failed"
 _CANCELLED = "cancelled"
 
 
-def _sv(val) -> dbus.Variant:
+def _sv(val):
     if isinstance(val, bool):
-        return dbus.Variant("b", val)
+        return dbus.Boolean(val)
     if isinstance(val, int):
-        return dbus.Variant("i", val)
+        return dbus.Int64(val)
     if isinstance(val, float):
-        return dbus.Variant("d", val)
-    return dbus.Variant("s", str(val) if val is not None else "")
+        return dbus.Double(val)
+    return dbus.String(str(val) if val is not None else "")
 
 
 class RouterService(dbus.service.Object):
@@ -217,7 +217,7 @@ class RouterService(dbus.service.Object):
             "id":     _sv(job["id"]),
             "status": _sv(job["status"]),
             "type":   _sv(job.get("type", "")),
-        })
+        }, signature="sv")
         if job["status"] == _FINISHED:
             # Summarize result as a flat string dict for simplicity in v0.0.1
             for k, v in job.get("result", {}).items():

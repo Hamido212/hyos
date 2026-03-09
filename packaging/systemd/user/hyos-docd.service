@@ -28,22 +28,8 @@ RemoveIPC=yes
 IPAddressAllow=127.0.0.1/8 ::1/128
 IPAddressDeny=any
 
-# Only allowed read paths
-ReadOnlyPaths=%h/Documents %h/Downloads %h/Desktop
-
 # No write paths — this service writes nothing
 ReadWritePaths=
-
-# Block sensitive directories
-InaccessiblePaths=/etc /root \
-    %h/.ssh \
-    %h/.gnupg \
-    %h/.config/chromium \
-    %h/.mozilla \
-    %h/.local/share/keyrings \
-    %h/.kube \
-    %h/.aws \
-    %h/.azure
 
 [Install]
 WantedBy=default.target

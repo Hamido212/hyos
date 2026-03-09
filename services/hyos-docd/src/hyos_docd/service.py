@@ -17,14 +17,14 @@ from . import extractor, ollama
 log = logging.getLogger(__name__)
 
 
-def _sv(val) -> dbus.Variant:
+def _sv(val):
     if isinstance(val, bool):
-        return dbus.Variant("b", val)
+        return dbus.Boolean(val)
     if isinstance(val, int):
-        return dbus.Variant("i", val)
+        return dbus.Int64(val)
     if isinstance(val, float):
-        return dbus.Variant("d", val)
-    return dbus.Variant("s", str(val) if val is not None else "")
+        return dbus.Double(val)
+    return dbus.String(str(val) if val is not None else "")
 
 
 def _timed(fn):
@@ -55,14 +55,14 @@ class DocumentService(dbus.service.Object):
         try:
             text = extractor.extract_text(str(uri))
             if not text.strip():
-                return dbus.Dictionary({"summary": _sv(""), "error": _sv("No text could be extracted from this document.")})
+                return dbus.Dictionary({"summary": _sv(""), "error": _sv("No text could be extracted from this document.")}, signature="sv")
             summary, elapsed = _timed(lambda: ollama.summarize(text))
             return dbus.Dictionary({
                 "summary":  _sv(summary),
-                "language": _sv(""),  # language detection: future
+                "language": _sv(""),
                 "model":    _sv(ollama._get_model()),
-                "duration": dbus.Variant("d", round(elapsed, 2)),
-            })
+                "duration": dbus.Double(round(elapsed, 2)),
+            }, signature="sv")
         except PermissionError as e:
             raise dbus.exceptions.DBusException("org.hyos.Error.AccessDenied", str(e))
         except RuntimeError as e:
@@ -93,8 +93,8 @@ class DocumentService(dbus.service.Object):
                 "deadlines_json": _sv(deadlines_str),
                 "model":          _sv(ollama._get_model()),
                 "language":       _sv(""),
-                "duration":       dbus.Variant("d", round(elapsed, 2)),
-            })
+                "duration":       dbus.Double(round(elapsed, 2)),
+            }, signature="sv")
         except PermissionError as e:
             raise dbus.exceptions.DBusException("org.hyos.Error.AccessDenied", str(e))
         except RuntimeError as e:
@@ -117,8 +117,8 @@ class DocumentService(dbus.service.Object):
                 "translation": _sv(translation),
                 "source_lang": _sv(""),
                 "model":       _sv(ollama._get_model()),
-                "duration":    dbus.Variant("d", round(elapsed, 2)),
-            })
+                "duration":    dbus.Double(round(elapsed, 2)),
+            }, signature="sv")
         except PermissionError as e:
             raise dbus.exceptions.DBusException("org.hyos.Error.AccessDenied", str(e))
         except RuntimeError as e:
@@ -141,8 +141,8 @@ class DocumentService(dbus.service.Object):
                 "draft":    _sv(draft),
                 "language": _sv(""),
                 "model":    _sv(ollama._get_model()),
-                "duration": dbus.Variant("d", round(elapsed, 2)),
-            })
+                "duration": dbus.Double(round(elapsed, 2)),
+            }, signature="sv")
         except PermissionError as e:
             raise dbus.exceptions.DBusException("org.hyos.Error.AccessDenied", str(e))
         except RuntimeError as e:
@@ -167,8 +167,8 @@ class DocumentService(dbus.service.Object):
                 "output":   _sv(output),
                 "model":    _sv(ollama._get_model()),
                 "action":   _sv(str(action)),
-                "duration": dbus.Variant("d", round(elapsed, 2)),
-            })
+                "duration": dbus.Double(round(elapsed, 2)),
+            }, signature="sv")
         except ValueError as e:
             raise dbus.exceptions.DBusException("org.hyos.Error.InvalidArgument", str(e))
         except RuntimeError as e:

@@ -17,15 +17,13 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 from .db import IndexDB, doc_id_for_path, mimetype_for_path
+from .xdg import get_allowed_roots
 
 log = logging.getLogger(__name__)
 
-# Paths the indexer is allowed to scan (enforced here AND in systemd unit)
-ALLOWED_ROOTS = [
-    Path.home() / "Documents",
-    Path.home() / "Downloads",
-    Path.home() / "Desktop",
-]
+# Resolved at import time so the list is stable for the lifetime of the process.
+# Uses ~/.config/user-dirs.dirs so German/French/etc. installs work correctly.
+ALLOWED_ROOTS: list[Path] = get_allowed_roots()
 
 INDEXED_SUFFIXES = {".txt", ".md", ".pdf", ".docx", ".odt", ".html", ".htm"}
 

@@ -25,8 +25,7 @@ RestrictRealtime=yes
 RemoveIPC=yes
 
 # Policy config (read) + log storage (write)
-ReadOnlyPaths=%h/.config/hyos
-ReadWritePaths=%h/.local/share/hyos/policy
+ReadWritePaths=%h/.config/hyos %h/.local/share/hyos/policy
 
 # No file system access outside of config
 InaccessiblePaths=/etc /root \

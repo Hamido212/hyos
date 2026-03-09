@@ -20,13 +20,11 @@ from pathlib import Path
 from urllib.parse import urlparse, unquote
 from xml.etree import ElementTree
 
+from .xdg import get_allowed_roots
+
 log = logging.getLogger(__name__)
 
-ALLOWED_ROOTS = [
-    Path.home() / "Documents",
-    Path.home() / "Downloads",
-    Path.home() / "Desktop",
-]
+ALLOWED_ROOTS: list[Path] = get_allowed_roots()
 
 MAX_TEXT_CHARS = 32_000  # ~8k tokens; enough for most letters/documents
 

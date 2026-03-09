@@ -44,6 +44,11 @@ echo ""
 echo "==> Deploying systemd user units → $SYSTEMD_USER_DIR"
 cp "$HYOS_ROOT/packaging/systemd/user/"*.service "$SYSTEMD_USER_DIR/"
 echo "    $(ls "$HYOS_ROOT/packaging/systemd/user/"*.service | wc -l) units deployed"
+
+# Remove any debug overrides that may have been created during troubleshooting
+for override_dir in "$SYSTEMD_USER_DIR"/hyos-*.service.d; do
+    [[ -d "$override_dir" ]] && rm -rf "$override_dir" && echo "    removed override: $(basename "$override_dir")"
+done
 systemctl --user daemon-reload
 
 # --- GNOME Search Provider registration -----------------------------------

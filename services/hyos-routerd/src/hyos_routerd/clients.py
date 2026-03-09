@@ -52,7 +52,7 @@ class PolicyClient:
         Falls back to {"decision": "allow"} if policyd is unavailable.
         """
         try:
-            dbus_action = {k: dbus.Variant("b", v) if isinstance(v, bool) else dbus.Variant("s", str(v))
+            dbus_action = {k: dbus.Boolean(v) if isinstance(v, bool) else dbus.String(str(v))
                            for k, v in action.items()}
             result = self._proxy().Evaluate(dbus_action, dbus_interface=self._IFACE)
             return _unpack(result)

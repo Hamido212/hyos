@@ -167,11 +167,11 @@ class SearchProvider(dbus.service.Object):
             gicon = "system-run-symbolic" if is_action else _mime_icon(cached.get("mimetype", ""))
 
             meta = dbus.Dictionary({
-                "id":          dbus.Variant("s", result_id),
-                "name":        dbus.Variant("s", cached.get("name", result_id)),
-                "description": dbus.Variant("s", cached.get("description", "")),
-                "gicon":       dbus.Variant("s", gicon),
-            })
+                "id":          dbus.String(result_id),
+                "name":        dbus.String(cached.get("name", result_id)),
+                "description": dbus.String(cached.get("description", "")),
+                "gicon":       dbus.String(gicon),
+            }, signature="sv")
             metas.append(meta)
 
         return dbus.Array(metas, signature="a{sv}")
