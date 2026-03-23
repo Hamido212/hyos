@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=org.hyos.Policy1
-Exec=/usr/libexec/hyos/hyos-policyd
-SystemdService=hyos-policyd.service

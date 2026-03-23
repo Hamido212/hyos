@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=tech.hyos.SearchProvider
-Exec=/usr/libexec/hyos/hyos-search-provider
-SystemdService=hyos-search-provider.service
